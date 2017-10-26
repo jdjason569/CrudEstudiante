@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Crud</title>
+    </h:head>
+    <h:body>
+        <h:form id="formulario">
+            <p:growl id="messages" showDetail="true" autoUpdate="true" />
+            <p:dataTable value="#{alumnoBean.listaAlumnos}" 
+                         var="alumno" 
+                         selection="#{alumnoBean.alumnoEditado}"
+                         selectionMode="single"
+                         rowKey="#{alumno.cod_alumno}"
+                         emptyMessage="No hay alumnos">
+                <f:facet name="header">
+                    Listado de alumnos
+                </f:facet>
+                <p:ajax event="rowSelect" listener="#{alumnoBean.onRowSelect()}"  update=":formulario:botones"/>
+
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{alumno.nombre_alumno}"/>
+                </p:column>
+                <p:column headerText="Apellido">
+                    <h:outputText value="#{alumno.apellido_alumno}"/>
+                </p:column>
+                <p:column headerText="Identificacion">
+                    <h:outputText value="#{alumno.identificacion_alumno}"/>
+                </p:column>
+                <p:column headerText="Genero">
+                    <h:outputText value="#{alumno.genero_alumno}"/>
+                </p:column>
+                <p:column headerText="Edad">
+                    <h:outputText value="#{alumno.edad_alumno}"/>
+                </p:column>
+                <p:column style="width:32px;text-align: center">
+                    <p:commandButton update=":formulario:alumnoDetail" oncomplete="PF('carDialog').show()" icon="ui-icon-search" title="Ver"
+                                     process="@this">
+                        <f:setPropertyActionListener value="#{alumno}" target="#{alumnoBean.alumnoSeleccionado}" />
+                    </p:commandButton>
+                    <p:commandButton update=":formulario:alumnoDetail3" icon="ui-icon-disk" oncomplete="PF('carDialog3').show()" >
+                        <f:setPropertyActionListener value="#{alumno}" target="#{alumnoBean.alumnoSeleccionado}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+            <p:panelGrid id="botones" columns="3" style="width: 100%">
+                <p:commandButton value="Crear Alumno" id="withIcon" update=":formulario" 
+                                 icon="ui-icon-disk" oncomplete="PF('carDialog2').show()">
+                </p:commandButton>
+
+                <p:commandButton value="Eliminar Alumno" id="withIcon3" update=":formulario" actionListener="#{alumnoBean.eliminarAlumno()}"
+                                 disabled="#{alumnoBean.mostrarBotones}">
+                    <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
+                </p:commandButton>
+
+            </p:panelGrid>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+
+            <p:dialog header="Informacion" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                <p:outputPanel id="alumnoDetail" style="text-align:center;">
+                    <p:panelGrid  columns="2" rendered="#{not empty alumnoBean.alumnoSeleccionado}" columnClasses="label,value">
+
+                        <h:outputText value="Codigo" />
+                        <h:outputText value="#{alumnoBean.alumnoSeleccionado.cod_alumno}" />
+                        <h:outputText value="Nombre" />
+                        <h:outputText value="#{alumnoBean.alumnoSeleccionado.nombre_alumno}" />
+
+                        <h:outputText value="Apellido" />
+                        <h:outputText value="#{alumnoBean.alumnoSeleccionado.apellido_alumno}" />
+
+                        <h:outputText value="Identificación" />
+                        <h:outputText value="#{alumnoBean.alumnoSeleccionado.identificacion_alumno}"/>
+
+                        <h:outputText value="Genero" />
+                        <h:outputText value="#{alumnoBean.alumnoSeleccionado.genero_alumno}" />
+                        <h:outputText value="Edad" />
+                        <h:outputText value="#{alumnoBean.alumnoSeleccionado.edad_alumno}" />
+                    </p:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+
+            <p:dialog header="Crear alumno" widgetVar="carDialog2" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                <p:outputPanel id="alumnoDetail2" style="text-align:center;">
+                    <p:panelGrid  columns="2" columnClasses="label,value">
+                        <h:outputText value="Nombre" />
+                        <p:inputText value="#{alumnoBean.alumno.nombre_alumno}" />
+
+                        <h:outputText value="Apellido" />
+                        <p:inputText value="#{alumnoBean.alumno.apellido_alumno}" />
+
+                        <h:outputText value="Identificación:" />
+                        <p:inputText value="#{alumnoBean.alumno.identificacion_alumno}"/>
+
+                        <h:outputText value="Genero:" />
+                        <p:inputText value="#{alumnoBean.alumno.genero_alumno}" />
+                        <h:outputText value="Edad:" />
+                        <p:inputText value="#{alumnoBean.alumno.edad_alumno}" />
+                        <p:commandButton value="Crear" action="#{alumnoBean.crearAlumno()}" update=":formulario">
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+            <p:dialog header="Editar alumno" widgetVar="carDialog3" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                <p:outputPanel id="alumnoDetail3" style="text-align:center;">
+                    <p:panelGrid  columns="2" >
+                        <h:outputText value="Nombre" />
+                        <p:inputText value="#{alumnoBean.alumnoSeleccionado.nombre_alumno}" />
+
+                        <h:outputText value="Apellido" />
+                        <p:inputText value="#{alumnoBean.alumnoSeleccionado.apellido_alumno}" />
+
+                        <h:outputText value="Identificación:" />
+                        <p:inputText value="#{alumnoBean.alumnoSeleccionado.identificacion_alumno}" />
+
+                        <h:outputText value="Genero:" />
+                        <p:inputText value="#{alumnoBean.alumnoSeleccionado.genero_alumno}" />
+                        <h:outputText value="Edad:" />
+                        <p:inputText value="#{alumnoBean.alumnoSeleccionado.edad_alumno}" />
+
+                        <p:commandButton value="Editar" action="#{alumnoBean.editarAlumno()}" update=":formulario"></p:commandButton>
+                    </p:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</html>
+
